@@ -45,7 +45,7 @@ func (b *Board) PrintBoard() {
   for x := 0; x < len(b.squares); x++ {
     fmt.Printf("%d| ", 8-x)
     for y := 0; y < len(b.squares[x]); y++ {
-      fmt.Printf("%x ", b.squares[x][y])
+      fmt.Printf("%s ", printPiece(b.squares[x][y]))
     }
     fmt.Println("")
   }
@@ -58,12 +58,58 @@ func (b *Board) PrintBoard() {
 
   fmt.Printf("Castling Ability: %b\n", b.castling)
   fmt.Printf("En Passant: %s\n", b.ep)
-  fmt.Printf("Halfmove Clock: %d\n", b.halfMoves)
+  fmt.Printf("Halfmove Clock: %d\n", b.halfMoves/2)
   fmt.Printf("Fullmove Number: %d\n", b.fullMoves)
 }
 
 func (b *Board) GetSquare(i int) *int {
   return &b.squares[i/8][i%8]
+}
+
+func (b *Board) MovePiece(input string) {
+  if len(input) == 4 {
+    oldx, oldy, err := AlgToCord(input[0:2])
+    if err != nil {
+      fmt.Errorf("Error: %x", err)
+    }
+    newx, newy, err := AlgToCord(input[2:4])
+    if err != nil {
+      fmt.Errorf("Error: %x", err)
+    }
+
+    if b.squares[newy][newx] != Blank {
+      b.halfMoves = 
+    }
+
+    b.squares[newy][newx] = b.squares[oldy][oldx]
+    b.squares[oldy][oldx] = Blank
+
+    fmt.Printf("Previous Move: %s\n", input)
+
+    if !b.active {
+      b.fullMoves++
+    }
+    b.active = !b.active
+  } 
+}
+
+func printPiece(piece int) string {
+  switch piece {
+  case BlackPawn: return "p"
+  case BlackRook: return "r"
+  case BlackBishop: return "b"
+  case BlackKnight: return "n"
+  case BlackQueen: return "q"
+  case BlackKing: return "k"
+  case WhitePawn: return "P"
+  case WhiteRook: return "R"
+  case WhiteBishop: return "B"
+  case WhiteKnight: return "N"
+  case WhiteQueen: return "Q"
+  case WhiteKing: return "K"
+  case Blank: return " "
+  default: return "#"
+  }
 }
 
 func ParseFENString(fen string) Board {
