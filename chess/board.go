@@ -78,7 +78,8 @@ func (b *Board) MovePiece(input string) {
     }
 
     if b.squares[newy][newx] != Blank {
-      b.halfMoves = 
+      //TODO: Fix the half move counter
+      b.halfMoves++
     }
 
     b.squares[newy][newx] = b.squares[oldy][oldx]
