@@ -40,6 +40,7 @@ const (
 )
 
 func (b *Board) PrintBoard() {
+  fmt.Println(MarshallFENString(*b))
   fmt.Println("   A B C D E F G H")
   fmt.Println("------------------")
   for x := 0; x < len(b.squares); x++ {
@@ -77,9 +78,10 @@ func (b *Board) MovePiece(input string) {
       fmt.Errorf("Error: %x", err)
     }
 
-    if b.squares[newy][newx] != Blank {
-      //TODO: Fix the half move counter
+    if b.squares[newy][newx] == Blank && b.squares[oldy][oldx] != WhitePawn && b.squares[oldy][oldx] != BlackPawn {
       b.halfMoves++
+    } else {
+      b.halfMoves = 0
     }
 
     b.squares[newy][newx] = b.squares[oldy][oldx]
@@ -126,6 +128,74 @@ func ParseFENString(fen string) Board {
   parseFullMoves(&b, data[5])
 
   return b
+}
+
+func MarshallFENString(b Board) string {
+  fen := ""
+
+  // Board state
+  for row := range b.squares {
+    spaces := 0
+    for col := range row {
+      fmt.Printf("%d ", b.squares[row][col])
+      switch b.squares[row][col] {
+        case Blank: spaces++
+        default:
+          if spaces > 0 {
+            fen += strconv.Itoa(spaces)
+            spaces = 0
+          }
+          fen += printPiece(b.squares[row][col])
+      }
+    }
+    if spaces > 0 {
+      fen += strconv.Itoa(spaces)
+    }
+    if row != 7 {
+      fen += "/"
+    } else {
+      fen += " "
+    }
+  }
+
+  // Active color
+  if b.active {
+    fen += "w "
+  } else {
+    fen += "b "
+  }
+
+  // Castling Availability
+  if b.castling == 0 {
+    fen += "- "
+  } else {
+    if b.castling & castleWhiteKing > 0 {
+      fen += "K"
+    }
+    if b.castling & castleWhiteQueen > 0 {
+      fen += "Q"
+    }
+    if b.castling & castleBlackKing > 0 {
+      fen += "k"
+    }
+    if b.castling & castleBlackQueen > 0 {
+      fen += "q"
+    }
+    fen += " "
+  }
+
+  // En Passant
+  fen += b.ep
+  fen += " "
+
+  // Halfmove Clock
+  fen += strconv.Itoa(int(b.halfMoves/2))
+  fen += " "
+
+  // Fullmove Number
+  fen += strconv.Itoa(int(b.fullMoves))
+
+  return fen
 }
 
 func parseFenBoard(b *Board, data string) {
