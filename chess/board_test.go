@@ -26,3 +26,18 @@ func TestAlgToCord(t *testing.T) {
     t.Fatalf("Input 'a66' expected an error.")
   }
 }
+
+func TestMartialFEN(t *testing.T) {
+  fens := []string{
+    "8/5k2/3p4/1p1Pp2p/pP2Pp1P/P4P1K/8/8 b - - 99 50", 
+    "rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq c3 0 2",
+  }
+  
+  for _, fen := range fens {
+    board := ParseFENString(fen)
+    mfen := MarshallFENString(board)
+    if mfen != fen {
+      t.Fatalf("Incorrect FEN string marshalled:\nInput: %s\nOutput: %s", fen, mfen)
+    }
+  }
+}

@@ -12,8 +12,8 @@ type Board struct {
   turn int
   castling int8
   ep string
-  halfMoves int8
-  fullMoves int16
+  halfMoves uint8
+  fullMoves uint16
 }
 
 const (
@@ -278,7 +278,7 @@ func parseHalfMoves(b *Board, hm string) error {
   if err != nil {
     return err
   }
-  b.halfMoves = int8(halfMoves)
+  b.halfMoves = uint8(halfMoves*2)
   return nil
 }
 
@@ -287,7 +287,7 @@ func parseFullMoves(b *Board, fm string) error {
   if err != nil {
     return err
   }
-  b.fullMoves = int16(fullMoves)
+  b.fullMoves = uint16(fullMoves)
   return nil
 }
 
