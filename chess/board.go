@@ -40,7 +40,6 @@ const (
 )
 
 func (b *Board) PrintBoard() {
-  fmt.Println(MarshallFENString(*b))
   fmt.Println("   A B C D E F G H")
   fmt.Println("------------------")
   for x := 0; x < len(b.squares); x++ {
@@ -136,8 +135,7 @@ func MarshallFENString(b Board) string {
   // Board state
   for row := range b.squares {
     spaces := 0
-    for col := range row {
-      fmt.Printf("%d ", b.squares[row][col])
+    for col := range b.squares[row] {
       switch b.squares[row][col] {
         case Blank: spaces++
         default:
